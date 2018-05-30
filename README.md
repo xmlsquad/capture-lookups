@@ -16,9 +16,13 @@ Use the `scapesettings.yaml` configuration file in the root of the xml-authoring
 (See sample at scapesettings.yaml.sample)
 
 The key should define the name of the lookup table and the value should define the URL of the Google Sheet that represents the lookup table on GSuite.
-LookupTableA -> https://URL-to-Google-SheetA
-LookupTableB -> https://URL-to-Google-SheetB
 
+* LookupTableA -> https://URL-to-Google-SheetA
+* LookupTableB -> https://URL-to-Google-SheetB
+
+## An example Google Sheet
+
+For example, the console command will go and find [this kind of Google Sheet](https://docs.google.com/spreadsheets/d/1kU_R8RokoMy9qvJqxy72H58cS48EVs0zRJXcgTZ5YFI/edit?usp=sharing) and write the values as a CSV.
 
 ## Connecting to GSuite
 
