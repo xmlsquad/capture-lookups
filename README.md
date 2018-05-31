@@ -17,12 +17,20 @@ Use the `scapesettings.yaml` configuration file in the root of the xml-authoring
 
 The key should define the name of the lookup table and the value should define the URL of the Google Sheet that represents the lookup table on GSuite.
 
-* LookupTableA -> https://URL-to-Google-SheetA
-* LookupTableB -> https://URL-to-Google-SheetB
+* LookupTableA -> 
+  * url-> https://URL-to-Google-SheetA
+  * StartingFromRow -> 2
+
+* LookupTableB -> 
+  * url-> https://URL-to-Google-SheetB
+  * StartingFromRow -> 1
 
 ## An example Google Sheet
 
 For example, the console command will go and find [this kind of Google Sheet](https://docs.google.com/spreadsheets/d/1kU_R8RokoMy9qvJqxy72H58cS48EVs0zRJXcgTZ5YFI/edit?usp=sharing) and write the values as a CSV.
+
+Note the column headers _may_ start on a row which is not the first row. Hence, `StartingFromRow` value in the configuration.
+If there are NUMROWS_SIGNIFY_END_OF_DATA (a constant in the command) consecutive blank rows we assume we are at the end of the sheet's data. So, if someone accidentally adds one blank row we continue, but say 10 blank rows is definately the end of the data rows and we can stop.
 
 ## Connecting to GSuite
 
@@ -33,7 +41,7 @@ The file that Google Api uses to authenticate access to GSuite should be in the 
 
 ## Run the command
 
-When the command is run, it will 
+When the command is run, it will:
 
 * Search for the scapesettings.yaml in the current working directory, if not found it will look in the parent recursively until a file named scapesettings.yaml is found.
 * Determine the `DestinationDirectory` to write-to:
