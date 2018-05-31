@@ -1,0 +1,4 @@
+ItemDetails Lookup Table,,,,,
+KNumberExists,KNumber,AlternativeNumber,SafetyNotes,UKManufacturer,LineStatus
+true,11111111,,Flamable,Acme,Active
+true,2222222,,Explosive,FooBarBoo,Deprecated
