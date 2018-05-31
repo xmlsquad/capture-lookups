@@ -25,9 +25,21 @@ The key should define the name of the lookup table and the value should define t
   * url-> https://URL-to-Google-SheetB
   * StartingFromRow -> 1
 
-## An example Google Sheet
+## An example 
 
-For example, the console command will go and find [this kind of Google Sheet](https://docs.google.com/spreadsheets/d/1kU_R8RokoMy9qvJqxy72H58cS48EVs0zRJXcgTZ5YFI/edit?usp=sharing) and write the values as a CSV.
+For example, the console command will look in the `LookUpTablesConfig.yaml` file and find the following information:
+
+```
+LookupTableA: {
+    url: "https://docs.google.com/spreadsheets/d/1kU_R8RokoMy9qvJqxy72H58cS48EVs0zRJXcgTZ5YFI/edit?usp=sharing",
+    StartingFromRow: 2
+  }
+```
+
+(See [Yaml Spec > Example 2.6. Mapping of Mappings](http://yaml.org/spec/1.2/spec.html#id2759963) )
+
+
+This will tell the command to go and find [this Google Sheet](https://docs.google.com/spreadsheets/d/1kU_R8RokoMy9qvJqxy72H58cS48EVs0zRJXcgTZ5YFI/edit?usp=sharing) and write the values as a CSV.
 
 Note the column headers _may_ start on a row which is not the first row. Hence, `StartingFromRow` value in the configuration.
 If there are NUMROWS_SIGNIFY_END_OF_DATA (a constant in the command) consecutive blank rows we assume we are at the end of the sheet's data. So, if someone accidentally adds one blank row we continue, but say 10 blank rows is definately the end of the data rows and we can stop.
