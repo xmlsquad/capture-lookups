@@ -11,19 +11,7 @@ Designed be used in the context of the Symfony Console application at https://gi
 
 We assume this command is run in the context of an [xml-authoring-project](https://github.com/forikal-uk/xml-authoring-project). ie. the key aspects of the structure of the directory is known.
 
-Use the `scapesettings.yaml` configuration file in the root of the xml-authoring-project to specify the mappings of the lookup files that we must collect.
-
-(See sample at scapesettings.yaml.sample)
-
-The key should define the name of the lookup table and the value should define the URL of the Google Sheet that represents the lookup table on GSuite.
-
-* LookupTableA -> 
-  * url-> https://URL-to-Google-SheetA
-  * StartingFromRow -> 2
-
-* LookupTableB -> 
-  * url-> https://URL-to-Google-SheetB
-  * StartingFromRow -> 1
+Use the `LookUpTablesConfig.yaml` configuration file which defines the locations of the Google Sheets we must collect.
 
 ## An example 
 
