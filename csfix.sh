@@ -1,3 +1,3 @@
 #!/bin/sh
 
-./bin/php-cs-fixer fix ./src --rules=@Symfony
+./vendor/bin/php-cs-fixer fix ./src --rules=@Symfony
