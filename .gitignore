@@ -1,6 +1,7 @@
 .DS_Store
 Thumbs.db
 credentials.json
+.php_cs.cache
 *.exe
 /.web-server-pid
 /app/config/parameters.yml
