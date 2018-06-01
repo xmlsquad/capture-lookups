@@ -26,7 +26,7 @@ LookupTableB:
   batchGet: false
 ```
 
-**Use `batchGet: true`** to have all sheets loaded in a single API call, reducing the execution time by avoiding network latency.  
+Use **`batchGet: true`** to have all sheets loaded in a single API call, reducing the execution time by avoiding network latency.  
 
 ## Using the command
 
@@ -38,21 +38,6 @@ LookupTableB:
 1. Issue `bin/console forikal:capture-lookups --sheet=LookupTableA --no-interaction` to run the command without any prompts, skipping risky file names or existing files
 1. Issue `bin/console forikal:capture-lookups --sheet=LookupTableA --no-interaction --force` to run the command without any prompts, **overwriting existing files** and **using sanitised file names**
  
-
-## An example 
-
-I have placed some example files in this project:
-
-https://github.com/forikal-uk/capture-lookups/tree/master/tests/example
-
-In that example, the console command will look in this example [`mapping.yaml` file](https://github.com/forikal-uk/capture-lookups/blob/master/tests/example/mapping.yaml).
-(See [Yaml Spec > Example 2.6. Mapping of Mappings](http://yaml.org/spec/1.2/spec.html#id2759963) )
-
-
-This will tell the command to go and find [the 'ItemDetailsLookupTable' Google Sheet specified](https://docs.google.com/spreadsheets/d/1ShazUnvBjWMe1OwJhpoegtx6QfqO8JITtkGlnLgEZrU/edit#gid=0) and, for each tab (that is not skipped), it will write out [this CSV file](https://github.com/forikal-uk/capture-lookups/blob/master/tests/example/ItemDetailsLookupTable-Sheet1.csv).
-
-Note the column headers _may_ start on a row which is not the first row. Hence, `StartingFromRow` value in the configuration.
-If there are NUMROWS_SIGNIFY_END_OF_DATA (a constant in the command) consecutive blank rows we assume we are at the end of the sheet's data. So, if someone accidentally adds one blank row we continue, but say 10 blank rows is definately the end of the data rows and we can stop.
 
 ## Skipped Tabs - Naming convention
 

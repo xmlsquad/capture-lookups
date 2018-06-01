@@ -1,4 +1,9 @@
-LookupTableA:
+WithBatch:
   url: "https://docs.google.com/spreadsheets/d/1jOfsClbTj15YUqE-X2Ai9cvyhP-GLvP8CGZPgD1TysI/edit#gid=0"
   startingFromRow: 2
   batchGet: true
+
+WithoutBatch:
+  url: "https://docs.google.com/spreadsheets/d/1jOfsClbTj15YUqE-X2Ai9cvyhP-GLvP8CGZPgD1TysI/edit#gid=0"
+  startingFromRow: 2
+  batchGet: false
