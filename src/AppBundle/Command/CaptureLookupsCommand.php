@@ -26,9 +26,10 @@ class CaptureLookupsCommand extends ContainerAwareCommand
         $this
             ->setName('forikal:capture-lookups')
             ->setDescription('Downloads specified Google Sheet and saves it as a CSV.')
-            ->addOption('destination', 'd', InputOption::VALUE_OPTIONAL, 'A path to a directory you want to store the resulting CSV files.')
+            ->addOption('destination', 'd', InputOption::VALUE_OPTIONAL, 'Path to a directory you want to store the resulting CSV files.')
             ->addOption('sheet', 's', InputOption::VALUE_OPTIONAL, 'Name of the sheet to download.')
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'Overwrites existing CSV files.')
+            ->addOption('credentials', null, InputOption::VALUE_OPTIONAL, 'Path to the .json file with Google user credentials.')
         ;
     }
 
@@ -92,7 +93,7 @@ class CaptureLookupsCommand extends ContainerAwareCommand
                     $safeFileName = preg_replace($regex, '', $safeFileName).'.csv';
 
                     $question = new ConfirmationQuestion(
-                        sprintf("<error>A risky file name detected.</error>\nI suggest to continue with a safe file name: <comment>%s</comment>.", $file, $safeFileName),
+                        sprintf("<error>A risky file name detected.</error>\nI suggest to continue with a safe file name: <comment>%s</comment>. Do you agree?", $file, $safeFileName),
                         $forcedMode,
                         '/^(y|yes)/i'
                     );

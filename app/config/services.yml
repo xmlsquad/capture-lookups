@@ -35,5 +35,4 @@ services:
     #         $someArgument: 'some_value'
 
     AppBundle\Service\GoogleApiService:
-        $credentialsFile: '%kernel.project_dir%/credentials.json'
-        $mappingFile: '%kernel.project_dir%/mapping.yml'
+        $projectDir: '%kernel.project_dir%'

@@ -18,31 +18,58 @@ class GoogleApiService {
      */
     private $mapping;
 
+    /** @var string  */
+    private $projectDir;
+
     /**
      * GoogleApiService constructor.
      * @param string $credentialsFile
      * @param string $mappingFile
      * @throws \Google_Exception
      */
-    public function __construct(string $credentialsFile, string $mappingFile)
+    public function __construct(string $projectDir)
     {
-        // Set up the API client
-        $client = new \Google_Client();
-        $client->setAuthConfig($credentialsFile);
-        $client->setApplicationName('capture-lookups');
-        $client->setScopes([
-            \Google_Service_Sheets::SPREADSHEETS_READONLY
-        ]);
-        $client->setAccessType('offline');
+        $this->projectDir = $projectDir;
 
-        $this->client = $client;
+    }
 
-        // Parse the Google Sheet mapping YAML file into an array
-        if (is_readable($mappingFile)) {
-            $this->mapping = Yaml::parse(file_get_contents($mappingFile));
-        } else {
-            throw new \RuntimeException(sprintf('The mapping.yaml was not found at %s or is not readable.', $mappingFile));
+    protected function getClient(?string $credentialsFile = null): \Google_Client {
+
+        if (null === $this->client) {
+            if (null === $credentialsFile) {
+                $credentialsFile = $this->projectDir.DIRECTORY_SEPARATOR.'credentials.json';
+            }
+
+            if (!is_readable($credentialsFile)) {
+                throw new \Exception(sprintf('The credentials file doesn\'t exist: %s.', $credentialsFile));
+            }
+
+            // Set up the API client
+            $client = new \Google_Client();
+            $client->setAuthConfig($credentialsFile);
+            $client->setApplicationName('capture-lookups');
+            $client->setScopes([
+                \Google_Service_Sheets::SPREADSHEETS_READONLY
+            ]);
+            $client->setAccessType('offline');
+
+            $this->client = $client;
         }
+
+        return $this->client;
+    }
+
+    /**
+     * A helper method allowing to use different credentials during the lifecycle of the application
+     *
+     * @param string $credentialsFile
+     * @return GoogleApiService
+     * @throws \Exception
+     */
+    public function setCredentials(string $credentialsFile): GoogleApiService {
+        $this->client = null;
+        $this->getClient($credentialsFile);
+        return $this;
     }
 
     /**
@@ -51,21 +78,34 @@ class GoogleApiService {
      * @return array
      */
     public function getMapping() {
+
+        if (null === $this->mapping) {
+            $mappingFile = $this->projectDir. DIRECTORY_SEPARATOR . 'mapping.yml';
+            // Parse the Google Sheet mapping YAML file into an array
+            if (is_readable($mappingFile)) {
+                $this->mapping = Yaml::parse(file_get_contents($mappingFile));
+            } else {
+                throw new \RuntimeException(sprintf('The mapping.yaml was not found at %s or is not readable.', $mappingFile));
+            }
+        }
+
         return $this->mapping;
     }
 
     /**
      * @param string $mappingId
      * @return array
+     * @throws \Exception
      */
     public function loadSheets(string $mappingId): array {
 
+        $mappingArray = $this->getMapping();
         // The URL is the only required mapping parameter
-        if (isset($this->mapping[$mappingId]['url'])) {
-            $mapping = &$this->mapping[$mappingId];
+        if (isset($mappingArray[$mappingId]['url'])) {
+            $mapping = &$mappingArray[$mappingId];
             $spreadsheetId = $this->getSpreadsheetId($mapping['url']);
 
-            $service = new \Google_Service_Sheets($this->client);
+            $service = new \Google_Service_Sheets($this->getClient());
             /** @var \Google_Service_Sheets_Spreadsheet $spreadsheet */
             $spreadsheet = $service->spreadsheets->get($spreadsheetId);
 
