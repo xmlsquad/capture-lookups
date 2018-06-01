@@ -2,6 +2,7 @@
 Thumbs.db
 credentials.json
 .php_cs.cache
+*.csv
 *.exe
 /.web-server-pid
 /app/config/parameters.yml
