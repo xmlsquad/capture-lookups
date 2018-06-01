@@ -69,10 +69,14 @@ class CaptureLookupsCommand extends ContainerAwareCommand
             return;
         }
 
-        if (isset($mapping[$mappingName])) {
+        // If the mapping didn't exist, list all those which do
+        if (!isset($mapping[$mappingName])) {
+            $this->listKnownSheets($output);
+        } else {
             $output->writeln(sprintf('<comment>Generated CSV files will be saved into %s.</comment>', $destination));
             $output->writeln('');
 
+            // This is where we force the GoogleApiService to load a cerdentials file
             $output->writeln(sprintf(
                 '<comment>Using credentials stored in %s.</comment>',
                 $this->googleApiService->setCredentials($input->getOption('credentials'))
@@ -81,6 +85,7 @@ class CaptureLookupsCommand extends ContainerAwareCommand
 
             $output->write('Fetching data from the Google API...');
 
+            // The service does the API-related job and returns an array of sheets and their values together with the document name
             list($documentName, $sheets) = $this->googleApiService->loadSheets($mappingName);
 
             $output->writeln('done.');
@@ -88,14 +93,16 @@ class CaptureLookupsCommand extends ContainerAwareCommand
             $output->writeln(sprintf('Document <info>%s</info> contains <info>%s</info> sheet(s). Writing CSV files now.', $documentName, count($sheets)));
             $output->writeln('');
 
+            // We'll be using this helper in the loop in a while, so let's fetch it just once
             $helper = $this->getHelper('question');
 
             foreach ($sheets as $sheetName => $sheetData) {
+                // This file name is potentially dangerous. More ont hat later.
                 $file = $documentName.'-'.$sheetName.'.csv';
 
                 $output->write(sprintf('Processing file <info>%s</info>. ', $file));
 
-                // Check for potentially unsafe characters
+                // Checks for potentially unsafe characters in the file name. If it is a risky file name, a remedy is offered.
                 $regex = '~[^0-9a-z_\-\.\ ]~i';
                 if (preg_match($regex, $file)) {
                     $safeFileName = iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $documentName.'-'.$sheetName);
@@ -115,8 +122,10 @@ class CaptureLookupsCommand extends ContainerAwareCommand
                     }
                 }
 
+                // At this stage we know that $file continues a safe file name - if the file name is risky and is not auto-corrected, the file is skipped.
                 $path = $destination.DIRECTORY_SEPARATOR.$file;
 
+                // Last check before overwriting the file
                 if (file_exists($path)) {
                     $question = new ConfirmationQuestion("<question>File already exists.</question>\nDo you wish to overwrite the file?", $forcedMode, '/^(y|yes)/i');
 
@@ -126,6 +135,7 @@ class CaptureLookupsCommand extends ContainerAwareCommand
                     }
                 }
 
+                // If we came here, everything either passed, or was accepted - so let's make our CSV file.
                 $fp = fopen($path, 'w');
                 foreach ($sheetData['values'] as $row) {
                     fputcsv($fp, $row);
@@ -137,8 +147,6 @@ class CaptureLookupsCommand extends ContainerAwareCommand
 
             $output->writeln('');
             $output->writeln('<comment>All CSV files saved successfully.</comment>');
-        } else {
-            $this->listKnownSheets($output);
         }
     }
 

@@ -166,6 +166,7 @@ class GoogleApiService
     protected function getClient(?string $credentialsFile = null): \Google_Client
     {
         if (null === $this->client) {
+            // These are the primary credentials.json locations
             $locations = [
                 // First check the project file
                 $this->projectDir.DIRECTORY_SEPARATOR.'credentials.json',
@@ -180,15 +181,18 @@ class GoogleApiService
                 array_unshift($locations, $credentialsFile);
             }
 
+            // In the first loop, we go through the primary locations.
             for ($loop = 1; $loop <= 2; ++$loop) {
                 while ($path = array_shift($locations)) {
                     if (file_exists($path) && is_readable($path)) {
+                        // When a file is found, we break free from both loops and just carry on with our life
                         break 2;
                     }
 
                     $locationsFailed[] = $path;
                 }
 
+                // If we made it here during the first loop, primary locations didn't work. We'll work out all the directories above us and try them
                 if (1 === $loop) {
                     // This means we didn't fin'd the file when checking the default locations.
                     $path = '/';
@@ -197,6 +201,8 @@ class GoogleApiService
                         array_unshift($locations, $path.'credentials.json');
                     }
                 }
+
+                // If we made it here during the second loop, neither primary nor secondary locations worked. We can't continue.
             }
 
             if (!$path) {
@@ -205,7 +211,6 @@ class GoogleApiService
                 $this->credentialsFile = $path;
             }
 
-            // Set up the API client
             $client = new \Google_Client();
             $client->setAuthConfig($path);
             $client->setApplicationName('capture-lookups');
