@@ -46,6 +46,15 @@ class GoogleApiService {
     }
 
     /**
+     * Returns the array resulting from mapping.yml
+     *
+     * @return array
+     */
+    public function getMapping() {
+        return $this->mapping;
+    }
+
+    /**
      * @param string $mappingId
      * @return array
      */
