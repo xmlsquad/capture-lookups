@@ -11,15 +11,14 @@ class GoogleApiService {
     /** @var \Google_Client  */
     private $client;
 
-    /**
-     * Parsed mapping.yml
-     *
-     * @var mixed
-     */
+    /** @var array Parsed mapping.yml */
     private $mapping;
 
-    /** @var string  */
+    /** @var string Symfony project directory */
     private $projectDir;
+
+    /** @var string Path to the used credentials file */
+    private $credentialsFile;
 
     /**
      * GoogleApiService constructor.
@@ -33,43 +32,26 @@ class GoogleApiService {
 
     }
 
-    protected function getClient(?string $credentialsFile = null): \Google_Client {
-
-        if (null === $this->client) {
-            if (null === $credentialsFile) {
-                $credentialsFile = $this->projectDir.DIRECTORY_SEPARATOR.'credentials.json';
-            }
-
-            if (!is_readable($credentialsFile)) {
-                throw new \Exception(sprintf('The credentials file doesn\'t exist: %s.', $credentialsFile));
-            }
-
-            // Set up the API client
-            $client = new \Google_Client();
-            $client->setAuthConfig($credentialsFile);
-            $client->setApplicationName('capture-lookups');
-            $client->setScopes([
-                \Google_Service_Sheets::SPREADSHEETS_READONLY
-            ]);
-            $client->setAccessType('offline');
-
-            $this->client = $client;
-        }
-
-        return $this->client;
-    }
-
     /**
      * A helper method allowing to use different credentials during the lifecycle of the application
      *
-     * @param string $credentialsFile
-     * @return GoogleApiService
+     * @param null|string $credentialsFile
+     * @return string
      * @throws \Exception
      */
-    public function setCredentials(string $credentialsFile): GoogleApiService {
+    public function setCredentials(?string $credentialsFile = null): string {
         $this->client = null;
         $this->getClient($credentialsFile);
-        return $this;
+        return $this->getCredentialsFile();
+    }
+
+    /**
+     * Returns path of the currently used credentials file.
+     *
+     * @return null|string
+     */
+    public function getCredentialsFile(): ?string {
+        return $this->credentialsFile;
     }
 
     /**
@@ -167,6 +149,69 @@ class GoogleApiService {
         }
     }
 
+    /**
+     * @param null|string $credentialsFile
+     * @return \Google_Client
+     * @throws \Google_Exception
+     */
+    protected function getClient(?string $credentialsFile = null): \Google_Client {
+
+        if (null === $this->client) {
+
+            $locations = [
+                // First check the project file
+                $this->projectDir.DIRECTORY_SEPARATOR.'credentials.json',
+                // Then the current working directory
+                getcwd().DIRECTORY_SEPARATOR.'credentials.json',
+            ];
+
+            $locationsFailed = [];
+
+            // Prepend the requested location if specified
+            if (null !== $credentialsFile) {
+                array_unshift($locations, $credentialsFile);
+            }
+
+            for ($loop = 1; $loop <= 2; ++$loop) {
+                while ($path = array_shift($locations)) {
+                    if (file_exists($path) && is_readable($path)) {
+                        break 2;
+                    }
+
+                    $locationsFailed[] = $path;
+                }
+
+                if ($loop === 1) {
+                    // This means we didn't fin'd the file when checking the default locations.
+                    $path = '/';
+                    foreach (array_filter(explode(DIRECTORY_SEPARATOR, dirname(getcwd()))) as $directory) {
+                        $path .= $directory . DIRECTORY_SEPARATOR;
+                        array_unshift($locations, $path . 'credentials.json');
+                    }
+                }
+            }
+
+            if (!$path) {
+                throw new \Exception("The credentials file wasn't found. Locations we tried: ".join(", ", $locationsFailed));
+            } else {
+                $this->credentialsFile = $path;
+            }
+
+            // Set up the API client
+            $client = new \Google_Client();
+            $client->setAuthConfig($path);
+            $client->setApplicationName('capture-lookups');
+            $client->setScopes([
+                \Google_Service_Sheets::SPREADSHEETS_READONLY
+            ]);
+            $client->setAccessType('offline');
+
+            $this->client = $client;
+        }
+
+        return $this->client;
+    }
+    
     /**
      * Extracts the document ID from the Sheet URL
      *

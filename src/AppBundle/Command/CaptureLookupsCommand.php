@@ -37,6 +37,7 @@ class CaptureLookupsCommand extends ContainerAwareCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int|null|void
+     * @throws \Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -62,14 +63,19 @@ class CaptureLookupsCommand extends ContainerAwareCommand
             return;
         }
 
-
-
         if (isset($mapping[$mappingName])) {
 
             $output->writeln(sprintf("<comment>Generated CSV files will be saved into %s.</comment>", $destination));
             $output->writeln('');
 
+            $output->writeln(sprintf(
+                "<comment>Using credentials stored in %s.</comment>",
+                $this->googleApiService->setCredentials($input->getOption('credentials'))
+            ));
+            $output->writeln('');
+
             $output->write('Fetching data from the Google API...');
+
             list($documentName, $sheets) = $this->googleApiService->loadSheets($mappingName);
 
             $output->writeln('done.');
@@ -109,14 +115,12 @@ class CaptureLookupsCommand extends ContainerAwareCommand
                 $path = $destination. DIRECTORY_SEPARATOR . $file;
 
                 if (file_exists($path)) {
-//                    if (!$forcedMode) {
-                        $question = new ConfirmationQuestion("<question>File already exists.</question>\nDo you wish to overwrite the file?", $forcedMode, '/^(y|yes)/i');
+                    $question = new ConfirmationQuestion("<question>File already exists.</question>\nDo you wish to overwrite the file?", $forcedMode, '/^(y|yes)/i');
 
-                        if (!$helper->ask($input, $output, $question)) {
-                            $output->writeln('<comment>Skipping (file exists).</comment>');
-                            continue;
-                        }
-//                    }
+                    if (!$helper->ask($input, $output, $question)) {
+                        $output->writeln('<comment>Skipping (file exists).</comment>');
+                        continue;
+                    }
                 }
 
                 $fp = fopen($path, 'w');
@@ -151,5 +155,4 @@ class CaptureLookupsCommand extends ContainerAwareCommand
 
         $table->render();
     }
-
 }
