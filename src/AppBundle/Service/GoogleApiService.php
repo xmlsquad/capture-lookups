@@ -96,9 +96,10 @@ class GoogleApiService {
 
                 /** @var \Google_Service_Sheets_ValueRange $valueRange */
                 foreach ($batchResult->getValueRanges() as $valueRange) {
-                    preg_match('~^[^!]+~', $valueRange->getRange(), $matches);
-                    if (!empty($matches)) {
-                        $sheets[$matches[0]]['values'] = $valueRange->getValues();
+                    preg_match('~^\'?([^\'!]+)\'?!~', $valueRange->getRange(), $matches);
+
+                    if (!empty($matches) && isset($matches[1])) {
+                        $sheets[$matches[1]]['values'] = $valueRange->getValues();
                     }
                     unset($valueRange, $matches);
                 }
