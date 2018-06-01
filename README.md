@@ -6,12 +6,38 @@ Designed be used in the context of the Symfony Console application at https://gi
 
 # Usage instructions
 
-
 ## Specifying the Lookup tables to collect
 
 We assume this command is run in the context of an [xml-authoring-project](https://github.com/forikal-uk/xml-authoring-project). ie. the key aspects of the structure of the directory is known.
 
-Use the `LookUpTablesConfig.yaml` configuration file which defines the locations of the Google Sheets we must collect.
+Use the `mapping.yaml` configuration file which defines the locations of the Google Sheets we must collect.
+
+### Example mapping.yaml
+
+```yaml
+LookupTableA:
+  url: "https://docs.google.com/spreadsheets/d/1jOfsClbTj15YUqE-X2Ai9cvyhP-GLvP8CGZPgD1TysI/edit#gid=0"
+  startingFromRow: 2
+  batchGet: true
+  
+LookupTableB:
+  url: "https://docs.google.com/spreadsheets/d/1jOfsClbTj15YUqE-X2Ai9cvyhP-GLvP8CGZPgD1TysI/edit#gid=0"
+  startingFromRow: 2
+  batchGet: false
+```
+
+**Use `batchGet: true`** to have all sheets loaded in a single API call, reducing the execution time by avoiding network latency.  
+
+## Using the command
+
+1. Checkout the repository
+1. Install dependencies with `composer install`
+1. Put a `credentials.json` file in the Symfony project root or anywhere in any of the parent directories accessible to PHP
+1. Issue `bin/console forikal:capture-lookups` to see all available mappings
+1. Issue `bin/console forikal:capture-lookups --sheet=LookupTableA` to run the command interactively
+1. Issue `bin/console forikal:capture-lookups --sheet=LookupTableA --no-interaction` to run the command without any prompts, skipping risky file names or existing files
+1. Issue `bin/console forikal:capture-lookups --sheet=LookupTableA --no-interaction --force` to run the command without any prompts, **overwriting existing files** and **using sanitised file names**
+ 
 
 ## An example 
 
@@ -19,7 +45,7 @@ I have placed some example files in this project:
 
 https://github.com/forikal-uk/capture-lookups/tree/master/tests/example
 
-In that example, the console command will look in this example [`LookUpTablesConfig.yaml` file](https://github.com/forikal-uk/capture-lookups/blob/master/tests/example/LookUpTablesConfig.yaml).
+In that example, the console command will look in this example [`mapping.yaml` file](https://github.com/forikal-uk/capture-lookups/blob/master/tests/example/mapping.yaml).
 (See [Yaml Spec > Example 2.6. Mapping of Mappings](http://yaml.org/spec/1.2/spec.html#id2759963) )
 
 
