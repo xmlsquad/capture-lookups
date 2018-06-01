@@ -62,17 +62,21 @@ class GoogleApiService
     /**
      * Returns the array resulting from mapping.yml.
      *
-     * @return array
+     * @return array|mixed
+     *
+     * @throws \Exception
      */
     public function getMapping()
     {
         if (null === $this->mapping) {
-            $mappingFile = $this->projectDir.DIRECTORY_SEPARATOR.'mapping.yml';
-            // Parse the Google Sheet mapping YAML file into an array
-            if (is_readable($mappingFile)) {
-                $this->mapping = Yaml::parse(file_get_contents($mappingFile));
-            } else {
+            $mappingFile = $this->locateFile('mapping.yml');
+
+            if (is_array($mappingFile)) {
+                throw new \Exception("The mapping file wasn't found. Locations we tried: ".join(', ', $mappingFile));
+            } elseif (!is_readable($mappingFile)) {
                 throw new \RuntimeException(sprintf('The mapping.yaml was not found at %s or is not readable.', $mappingFile));
+            } else {
+                $this->mapping = Yaml::parse(file_get_contents($mappingFile));
             }
         }
 
@@ -166,15 +170,12 @@ class GoogleApiService
     protected function getClient(?string $credentialsFile = null): \Google_Client
     {
         if (null === $this->client) {
-
             $path = $this->locateFile('credentials.json', $credentialsFile);
 
             if (is_array($path)) {
                 throw new \Exception("The credentials file wasn't found. Locations we tried: ".join(', ', $path));
-            } elseif(is_string($path)) {
+            } elseif (is_string($path)) {
                 $this->credentialsFile = $path;
-            } else {
-                throw new \Exception("Unexpected value returned by GoogleApiService::locateFile: ".print_r($path, true));
             }
 
             $client = new \Google_Client();
@@ -203,16 +204,21 @@ class GoogleApiService
      *
      * @param $fileName
      * @param null|string $userSuppliedPath
+     *
      * @return string|array
      */
-    private function locateFile($fileName, ?string $userSuppliedPath = null) {
+    private function locateFile($fileName, ?string $userSuppliedPath = null)
+    {
         // These are the primary credentials.json locations
         $locations = [
             // First check the project file
             $this->projectDir.DIRECTORY_SEPARATOR.$fileName,
-            // Then the current working directory
-            getcwd().DIRECTORY_SEPARATOR.$fileName,
         ];
+
+        // Then the current working directory, providing it is different from the project directory
+        if (getcwd() !== $this->projectDir) {
+            $locations[] = getcwd().DIRECTORY_SEPARATOR.$fileName;
+        }
 
         $locationsFailed = [];
 
@@ -236,6 +242,9 @@ class GoogleApiService
             if (1 === $loop) {
                 // This means we didn't fin'd the file when checking the default locations, so let's try everything we can
 
+                // Add the root directory first
+                $locations[] = DIRECTORY_SEPARATOR.$fileName;
+
                 // We'll take CWD and project directory and will try to crawl all the way up to the root to attempt to load the file
                 foreach ([$this->projectDir, getcwd()] as $leafDirectory) {
                     $path = '/';
@@ -243,8 +252,10 @@ class GoogleApiService
                         $path .= $directory.DIRECTORY_SEPARATOR;
 
                         // Don't add one location twice
-                        if (array_search($path.$fileName, $locationsFailed) === false
-                            && array_search($path.$fileName, $locations) === false
+                        if (false === array_search($path.$fileName, $locationsFailed)
+                            && false === array_search($path.$fileName, $locations)
+                            && is_dir($path)
+                            && is_readable($path)
                         ) {
                             array_unshift($locations, $path.$fileName);
                         }

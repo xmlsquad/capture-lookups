@@ -152,6 +152,8 @@ class CaptureLookupsCommand extends ContainerAwareCommand
 
     /**
      * @param OutputInterface $output
+     *
+     * @throws \Exception
      */
     protected function listKnownSheets(OutputInterface $output)
     {
