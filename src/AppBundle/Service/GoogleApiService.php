@@ -66,6 +66,11 @@ class GoogleApiService {
                 /** @var \Google_Service_Sheets_SheetProperties $sp */
                 $sp = &$s['properties'];
 
+                // Skip all sheets with trailing underscore
+                if (preg_match('~_$~', $sp->getTitle())) {
+                    continue;
+                }
+
                 $sheets[$sp->getTitle()] = [
                     // TODO we could decide batchGet basedon the size of the batch. Do we care?
 //                    'columnCount' => $sp->getGridProperties()->getColumnCount(),
