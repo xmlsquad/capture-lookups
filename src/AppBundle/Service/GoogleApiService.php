@@ -166,49 +166,15 @@ class GoogleApiService
     protected function getClient(?string $credentialsFile = null): \Google_Client
     {
         if (null === $this->client) {
-            // These are the primary credentials.json locations
-            $locations = [
-                // First check the project file
-                $this->projectDir.DIRECTORY_SEPARATOR.'credentials.json',
-                // Then the current working directory
-                getcwd().DIRECTORY_SEPARATOR.'credentials.json',
-            ];
 
-            $locationsFailed = [];
+            $path = $this->locateFile('credentials.json', $credentialsFile);
 
-            // Prepend the requested location if specified
-            if (null !== $credentialsFile) {
-                array_unshift($locations, $credentialsFile);
-            }
-
-            // In the first loop, we go through the primary locations.
-            for ($loop = 1; $loop <= 2; ++$loop) {
-                while ($path = array_shift($locations)) {
-                    if (file_exists($path) && is_readable($path)) {
-                        // When a file is found, we break free from both loops and just carry on with our life
-                        break 2;
-                    }
-
-                    $locationsFailed[] = $path;
-                }
-
-                // If we made it here during the first loop, primary locations didn't work. We'll work out all the directories above us and try them
-                if (1 === $loop) {
-                    // This means we didn't fin'd the file when checking the default locations.
-                    $path = '/';
-                    foreach (array_filter(explode(DIRECTORY_SEPARATOR, dirname(getcwd()))) as $directory) {
-                        $path .= $directory.DIRECTORY_SEPARATOR;
-                        array_unshift($locations, $path.'credentials.json');
-                    }
-                }
-
-                // If we made it here during the second loop, neither primary nor secondary locations worked. We can't continue.
-            }
-
-            if (!$path) {
-                throw new \Exception("The credentials file wasn't found. Locations we tried: ".join(', ', $locationsFailed));
-            } else {
+            if (is_array($path)) {
+                throw new \Exception("The credentials file wasn't found. Locations we tried: ".join(', ', $path));
+            } elseif(is_string($path)) {
                 $this->credentialsFile = $path;
+            } else {
+                throw new \Exception("Unexpected value returned by GoogleApiService::locateFile: ".print_r($path, true));
             }
 
             $client = new \Google_Client();
@@ -223,6 +189,73 @@ class GoogleApiService
         }
 
         return $this->client;
+    }
+
+    /**
+     * Looks for a specified file name in various locations.
+     *
+     * Returns path to the file if found, or array of tried locations if not found.
+     *
+     * Locations checked:
+     *
+     * - Project root dir
+     * - Current working directory
+     *
+     * @param $fileName
+     * @param null|string $userSuppliedPath
+     * @return string|array
+     */
+    private function locateFile($fileName, ?string $userSuppliedPath = null) {
+        // These are the primary credentials.json locations
+        $locations = [
+            // First check the project file
+            $this->projectDir.DIRECTORY_SEPARATOR.$fileName,
+            // Then the current working directory
+            getcwd().DIRECTORY_SEPARATOR.$fileName,
+        ];
+
+        $locationsFailed = [];
+
+        // Prepend the requested location if specified
+        if (null !== $userSuppliedPath) {
+            array_unshift($locations, $userSuppliedPath);
+        }
+
+        // In the first loop, we go through the primary locations.
+        for ($loop = 1; $loop <= 2; ++$loop) {
+            while ($path = array_shift($locations)) {
+                if (file_exists($path) && is_readable($path)) {
+                    // When a file is found, we break free from both loops and just carry on with our life
+                    return $path;
+                }
+
+                $locationsFailed[] = $path;
+            }
+
+            // If we made it here during the first loop, primary locations didn't work. We'll work out all the directories above us and try them
+            if (1 === $loop) {
+                // This means we didn't fin'd the file when checking the default locations, so let's try everything we can
+
+                // We'll take CWD and project directory and will try to crawl all the way up to the root to attempt to load the file
+                foreach ([$this->projectDir, getcwd()] as $leafDirectory) {
+                    $path = '/';
+                    foreach (array_filter(explode(DIRECTORY_SEPARATOR, dirname($leafDirectory))) as $directory) {
+                        $path .= $directory.DIRECTORY_SEPARATOR;
+
+                        // Don't add one location twice
+                        if (array_search($path.$fileName, $locationsFailed) === false
+                            && array_search($path.$fileName, $locations) === false
+                        ) {
+                            array_unshift($locations, $path.$fileName);
+                        }
+                    }
+                }
+            }
+
+            // If we made it here during the second loop, neither primary nor secondary locations worked. We can't continue.
+        }
+
+        return $locationsFailed;
     }
 
     /**
