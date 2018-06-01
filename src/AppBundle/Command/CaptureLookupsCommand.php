@@ -15,12 +15,13 @@ class CaptureLookupsCommand extends ContainerAwareCommand
     /** @var GoogleApiService */
     private $googleApiService;
 
-    public function __construct(GoogleApiService $googleApiService) {
+    public function __construct(GoogleApiService $googleApiService)
+    {
         $this->googleApiService = $googleApiService;
         parent::__construct();
     }
 
-    /** @inheritdoc */
+    /** {@inheritdoc} */
     protected function configure()
     {
         $this
@@ -34,9 +35,11 @@ class CaptureLookupsCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param InputInterface $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
+     *
      * @return int|null|void
+     *
      * @throws \Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -50,26 +53,28 @@ class CaptureLookupsCommand extends ContainerAwareCommand
 
         if (empty($destination)) {
             $output->writeln(sprintf('<error>The destination directory doesn\'t exist: %s</error>', $input->getOption('destination') ?: getcwd()));
+
             return;
         }
 
         if (!is_dir($destination)) {
             $output->writeln(sprintf('<error>The destination is not a valid directory: %s</error>', $destination));
+
             return;
         }
 
         if (!is_writable($destination)) {
             $output->writeln(sprintf('<error>The destination is not writable: %s</error>', $destination));
+
             return;
         }
 
         if (isset($mapping[$mappingName])) {
-
-            $output->writeln(sprintf("<comment>Generated CSV files will be saved into %s.</comment>", $destination));
+            $output->writeln(sprintf('<comment>Generated CSV files will be saved into %s.</comment>', $destination));
             $output->writeln('');
 
             $output->writeln(sprintf(
-                "<comment>Using credentials stored in %s.</comment>",
+                '<comment>Using credentials stored in %s.</comment>',
                 $this->googleApiService->setCredentials($input->getOption('credentials'))
             ));
             $output->writeln('');
@@ -86,7 +91,6 @@ class CaptureLookupsCommand extends ContainerAwareCommand
             $helper = $this->getHelper('question');
 
             foreach ($sheets as $sheetName => $sheetData) {
-
                 $file = $documentName.'-'.$sheetName.'.csv';
 
                 $output->write(sprintf('Processing file <info>%s</info>. ', $file));
@@ -94,8 +98,7 @@ class CaptureLookupsCommand extends ContainerAwareCommand
                 // Check for potentially unsafe characters
                 $regex = '~[^0-9a-z_\-\.\ ]~i';
                 if (preg_match($regex, $file)) {
-
-                    $safeFileName = iconv("UTF-8", "ISO-8859-1//TRANSLIT", $documentName.'-'.$sheetName);
+                    $safeFileName = iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $documentName.'-'.$sheetName);
                     $safeFileName = preg_replace($regex, '', $safeFileName).'.csv';
 
                     $question = new ConfirmationQuestion(
@@ -112,7 +115,7 @@ class CaptureLookupsCommand extends ContainerAwareCommand
                     }
                 }
 
-                $path = $destination. DIRECTORY_SEPARATOR . $file;
+                $path = $destination.DIRECTORY_SEPARATOR.$file;
 
                 if (file_exists($path)) {
                     $question = new ConfirmationQuestion("<question>File already exists.</question>\nDo you wish to overwrite the file?", $forcedMode, '/^(y|yes)/i');
@@ -134,7 +137,6 @@ class CaptureLookupsCommand extends ContainerAwareCommand
 
             $output->writeln('');
             $output->writeln('<comment>All CSV files saved successfully.</comment>');
-
         } else {
             $this->listKnownSheets($output);
         }
@@ -143,7 +145,8 @@ class CaptureLookupsCommand extends ContainerAwareCommand
     /**
      * @param OutputInterface $output
      */
-    protected function listKnownSheets(OutputInterface $output) {
+    protected function listKnownSheets(OutputInterface $output)
+    {
         $output->writeln('Please enter one of the configured Sheet names');
 
         $table = new Table($output);
