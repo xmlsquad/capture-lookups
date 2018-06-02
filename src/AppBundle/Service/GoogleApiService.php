@@ -16,37 +16,46 @@ class GoogleApiService
     /** @var string Symfony project directory */
     private $projectDir;
 
+    /** @var string */
+    private $credentialsFileName;
+
     /** @var string Path to the used credentials file */
-    private $credentialsFile;
+    private $credentialsFilePath;
+
+    /** @var string */
+    private $mappingFileName;
+
+    /** @var string Path to the used mapping file */
+    private $mappingFilePath;
 
     /**
      * GoogleApiService constructor.
-     *
-     * @param string $credentialsFile
-     * @param string $mappingFile
-     *
-     * @throws \Google_Exception
+     * @param string $projectDir
+     * @param string $mappingFileName
+     * @param string $credentialsFileName
      */
-    public function __construct(string $projectDir)
+    public function __construct(string $projectDir, string $mappingFileName, string $credentialsFileName)
     {
         $this->projectDir = $projectDir;
+        $this->mappingFileName = $mappingFileName;
+        $this->credentialsFileName = $credentialsFileName;
     }
 
     /**
      * A helper method allowing to use different credentials during the lifecycle of the application.
      *
-     * @param null|string $credentialsFile
+     * @param null|string $credentialsFilePath
      *
      * @return string
      *
      * @throws \Exception
      */
-    public function setCredentials(?string $credentialsFile = null): string
+    public function setCredentials(?string $credentialsFilePath = null): string
     {
         $this->client = null;
-        $this->getClient($credentialsFile);
+        $this->getClient($credentialsFilePath);
 
-        return $this->getCredentialsFile();
+        return $this->getCredentialsFilePath();
     }
 
     /**
@@ -54,9 +63,19 @@ class GoogleApiService
      *
      * @return null|string
      */
-    public function getCredentialsFile(): ?string
+    public function getCredentialsFilePath(): ?string
     {
-        return $this->credentialsFile;
+        return $this->credentialsFilePath;
+    }
+
+    /**
+     * Returns path of the currently used credentials file.
+     *
+     * @return null|string
+     */
+    public function getMappingFilePath(): ?string
+    {
+        return $this->mappingFilePath;
     }
 
     /**
@@ -69,14 +88,15 @@ class GoogleApiService
     public function getMapping()
     {
         if (null === $this->mapping) {
-            $mappingFile = $this->locateFile('mapping.yml');
+            $mappingFilePath = $this->locateFile($this->mappingFileName);
 
-            if (is_array($mappingFile)) {
-                throw new \Exception("The mapping file wasn't found. Locations we tried: ".join(', ', $mappingFile));
-            } elseif (!is_readable($mappingFile)) {
-                throw new \RuntimeException(sprintf('The mapping.yaml was not found at %s or is not readable.', $mappingFile));
+            if (is_array($mappingFilePath)) {
+                throw new \Exception("The mapping file wasn't found. Locations we tried: ".join(', ', $mappingFilePath));
+            } elseif (!is_readable($mappingFilePath)) {
+                throw new \RuntimeException(sprintf('The mapping.yaml was not found at %s or is not readable.', $mappingFilePath));
             } else {
-                $this->mapping = Yaml::parse(file_get_contents($mappingFile));
+                $this->mappingFilePath = $mappingFilePath;
+                $this->mapping = Yaml::parse(file_get_contents($mappingFilePath));
             }
         }
 
@@ -161,21 +181,19 @@ class GoogleApiService
     }
 
     /**
-     * @param null|string $credentialsFile
+     * @param null|string $customCredentialsFilePath
      *
      * @return \Google_Client
      *
      * @throws \Google_Exception
      */
-    protected function getClient(?string $credentialsFile = null): \Google_Client
+    protected function getClient(?string $customCredentialsFilePath = null): \Google_Client
     {
         if (null === $this->client) {
-            $path = $this->locateFile('credentials.json', $credentialsFile);
+            $path = $this->locateFile($this->credentialsFileName, $customCredentialsFilePath);
 
             if (is_array($path)) {
                 throw new \Exception("The credentials file wasn't found. Locations we tried: ".join(', ', $path));
-            } elseif (is_string($path)) {
-                $this->credentialsFile = $path;
             }
 
             $client = new \Google_Client();
@@ -187,6 +205,7 @@ class GoogleApiService
             $client->setAccessType('offline');
 
             $this->client = $client;
+            $this->credentialsFilePath = $path;
         }
 
         return $this->client;
@@ -209,7 +228,7 @@ class GoogleApiService
      */
     private function locateFile($fileName, ?string $userSuppliedPath = null)
     {
-        // These are the primary credentials.json locations
+        // These are the primary credentials file locations
         $locations = [
             // First check the project file
             $this->projectDir.DIRECTORY_SEPARATOR.$fileName,
@@ -278,6 +297,6 @@ class GoogleApiService
      */
     private function getSpreadsheetId(string $url): string
     {
-        return preg_replace('~.*spreadsheets/d/([a-zA-Z0-9\-]+).*~', '$1', $url);
+        return preg_replace('~.*spreadsheets/d/([^/]+).*~', '$1', $url);
     }
 }

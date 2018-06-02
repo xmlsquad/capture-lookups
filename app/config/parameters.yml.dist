@@ -4,3 +4,5 @@
 parameters:
     # A secret key that's used to generate certain security-related tokens
     secret: ThisTokenIsNotSoSecretChangeIt
+    credentials_file_name: 'credentials.json'
+    mapping_file_name: 'mapping.yml'
