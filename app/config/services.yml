@@ -29,3 +29,5 @@ services:
 
     AppBundle\Service\GoogleApiService:
         $projectDir: '%kernel.project_dir%'
+        $mappingFileName: '%mapping_file_name%'
+        $credentialsFileName: '%credentials_file_name%'

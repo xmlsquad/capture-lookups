@@ -19,5 +19,6 @@ credentials.json
 /var/sessions/*
 !var/sessions/.gitkeep
 !var/SymfonyRequirements.php
+!/var/tmp
 /vendor/
 /web/bundles/

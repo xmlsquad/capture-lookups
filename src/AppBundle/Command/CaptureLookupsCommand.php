@@ -106,10 +106,13 @@ class CaptureLookupsCommand extends ContainerAwareCommand
                 $regex = '~[^0-9a-z_\-\.\ ]~i';
                 if (preg_match($regex, $file)) {
                     $safeFileName = iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $documentName.'-'.$sheetName);
-                    $safeFileName = preg_replace($regex, '', $safeFileName).'.csv';
+                    $safeFileName = trim(preg_replace($regex, '', $safeFileName)).'.csv';
+
+                    // Removes multiple spaces too
+                    $safeFileName = preg_replace('~\ {2,}~', ' ', $safeFileName);
 
                     $question = new ConfirmationQuestion(
-                        sprintf("<error>A risky file name detected.</error>\nI suggest to continue with a safe file name: <comment>%s</comment>. Do you agree?", $file, $safeFileName),
+                        sprintf("<error>A risky file name detected.</error>\nI suggest to continue with a safe file name: <comment>%s</comment>. Do you agree?", $safeFileName),
                         $forcedMode,
                         '/^(y|yes)/i'
                     );
