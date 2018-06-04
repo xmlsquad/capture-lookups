@@ -1,0 +1,3 @@
+parameters:
+    credentials_file_name: 'credentials_test.json'
+    mapping_file_name: 'mapping_test.yml'

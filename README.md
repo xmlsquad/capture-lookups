@@ -6,27 +6,44 @@ Designed be used in the context of the Symfony Console application at https://gi
 
 # Usage instructions
 
-
 ## Specifying the Lookup tables to collect
 
 We assume this command is run in the context of an [xml-authoring-project](https://github.com/forikal-uk/xml-authoring-project). ie. the key aspects of the structure of the directory is known.
 
-Use the `LookUpTablesConfig.yaml` configuration file which defines the locations of the Google Sheets we must collect.
+Use the `mapping.yaml` configuration file which defines the locations of the Google Sheets we must collect.
 
-## An example 
+### Example mapping.yaml
 
-I have placed some example files in this project:
+```yaml
+LookupTableA:
+  # (string) Specifies the URL of the sheet to look into
+  url: "https://docs.google.com/spreadsheets/d/1jOfsClbTj15YUqE-X2Ai9cvyhP-GLvP8CGZPgD1TysI/edit#gid=0"
+  # (int) Sets at what row number we'll start reading data - use if you want to skip the beginning of the sheet, for example a header
+  startingFromRow: 2
+  
+  # (bool) Enable or disable fetching data in a batch. Doing so is faster, but may fail if there is a lot of data to be fetched
+  batchGet: true
+  
+LookupTableB:
+  url: "https://docs.google.com/spreadsheets/d/1jOfsClbTj15YUqE-X2Ai9cvyhP-GLvP8CGZPgD1TysI/edit#gid=0"
+  startingFromRow: 2
+  batchGet: false
+```  
 
-https://github.com/forikal-uk/capture-lookups/tree/master/tests/example
+## Using the command
 
-In that example, the console command will look in this example [`LookUpTablesConfig.yaml` file](https://github.com/forikal-uk/capture-lookups/blob/master/tests/example/LookUpTablesConfig.yaml).
-(See [Yaml Spec > Example 2.6. Mapping of Mappings](http://yaml.org/spec/1.2/spec.html#id2759963) )
+1. Checkout the repository
+1. Install dependencies with `composer install`
+1. Put a `credentials.json` file in the Symfony project root or anywhere in any of the parent directories accessible to PHP
+1. Issue `bin/console forikal:capture-lookups` to see all available mappings
+1. Issue `bin/console forikal:capture-lookups --sheet=LookupTableA` to run the command interactively
+1. Issue `bin/console forikal:capture-lookups --sheet=LookupTableA --no-interaction` to run the command without any prompts, skipping risky file names or existing files
+1. Issue `bin/console forikal:capture-lookups --sheet=LookupTableA --no-interaction --force` to run the command without any prompts, **overwriting existing files** and **using sanitised file names**
+ 
+## Unit testing
 
-
-This will tell the command to go and find [the 'ItemDetailsLookupTable' Google Sheet specified](https://docs.google.com/spreadsheets/d/1ShazUnvBjWMe1OwJhpoegtx6QfqO8JITtkGlnLgEZrU/edit#gid=0) and, for each tab (that is not skipped), it will write out [this CSV file](https://github.com/forikal-uk/capture-lookups/blob/master/tests/example/ItemDetailsLookupTable-Sheet1.csv).
-
-Note the column headers _may_ start on a row which is not the first row. Hence, `StartingFromRow` value in the configuration.
-If there are NUMROWS_SIGNIFY_END_OF_DATA (a constant in the command) consecutive blank rows we assume we are at the end of the sheet's data. So, if someone accidentally adds one blank row we continue, but say 10 blank rows is definately the end of the data rows and we can stop.
+1. Install dependencies
+1. Run `./vendor/bin/phpunit`
 
 ## Skipped Tabs - Naming convention
 

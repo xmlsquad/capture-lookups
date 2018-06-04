@@ -1,0 +1,9 @@
+TestingSheet:
+  url: "https://docs.google.com/spreadsheets/d/1ntgjIXTK_-7cOkbyTrnusI8zTu9UxArPJ-C7vQGwYMY/edit"
+  startingFromRow: 2
+  batchGet: true
+
+TestingSheetBatchGet:
+  url: "https://docs.google.com/spreadsheets/d/1ntgjIXTK_-7cOkbyTrnusI8zTu9UxArPJ-C7vQGwYMY/edit"
+  startingFromRow: 2
+  batchGet: true
