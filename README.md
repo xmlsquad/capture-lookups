@@ -40,6 +40,10 @@ LookupTableB:
 1. Issue `bin/console forikal:capture-lookups --sheet=LookupTableA --no-interaction` to run the command without any prompts, skipping risky file names or existing files
 1. Issue `bin/console forikal:capture-lookups --sheet=LookupTableA --no-interaction --force` to run the command without any prompts, **overwriting existing files** and **using sanitised file names**
  
+## Unit testing
+
+1. Install dependencies
+1. Run `./vendor/bin/phpunit`
 
 ## Skipped Tabs - Naming convention
 
