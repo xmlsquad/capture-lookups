@@ -16,17 +16,19 @@ Use the `mapping.yaml` configuration file which defines the locations of the Goo
 
 ```yaml
 LookupTableA:
+  # (string) Specifies the URL of the sheet to look into
   url: "https://docs.google.com/spreadsheets/d/1jOfsClbTj15YUqE-X2Ai9cvyhP-GLvP8CGZPgD1TysI/edit#gid=0"
+  # (int) Sets at what row number we'll start reading data - use if you want to skip the beginning of the sheet, for example a header
   startingFromRow: 2
+  
+  # (bool) Enable or disable fetching data in a batch. Doing so is faster, but may fail if there is a lot of data to be fetched
   batchGet: true
   
 LookupTableB:
   url: "https://docs.google.com/spreadsheets/d/1jOfsClbTj15YUqE-X2Ai9cvyhP-GLvP8CGZPgD1TysI/edit#gid=0"
   startingFromRow: 2
   batchGet: false
-```
-
-Use **`batchGet: true`** to have all sheets loaded in a single API call, reducing the execution time by avoiding network latency.  
+```  
 
 ## Using the command
 
