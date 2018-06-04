@@ -166,7 +166,9 @@ class CaptureLookupsCommand extends ContainerAwareCommand
         $table->setHeaders(['Sheet Name', 'URL']);
 
         foreach ($this->googleApiService->getMapping() as $mappingName => $mappingProperties) {
-            $table->addRow([$mappingName, $mappingProperties['url']]);
+            if (isset($mappingProperties['url'])) {
+                $table->addRow([$mappingName, $mappingProperties['url']]);
+            }
         }
 
         $table->render();

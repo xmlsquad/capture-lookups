@@ -30,6 +30,7 @@ class GoogleApiService
 
     /**
      * GoogleApiService constructor.
+     *
      * @param string $projectDir
      * @param string $mappingFileName
      * @param string $credentialsFileName
