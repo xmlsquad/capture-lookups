@@ -120,7 +120,7 @@ class CaptureLookupsCommand extends ContainerAwareCommand
                     $safeFileName = preg_replace('~\ {2,}~', ' ', $safeFileName);
 
                     $question = new ConfirmationQuestion(
-                        sprintf("<error>A risky file name detected.</error>\nI suggest to continue with a safe file name: <comment>%s</comment>. Do you agree? %s", $safeFileName, $default),
+                        sprintf("<error>A risky file name detected.</error>\nI suggest to continue with a safe file name: <comment>%s</comment>. Do you agree? %s ", $safeFileName, $default),
                         $forcedMode,
                         '/^(y|yes)/i'
                     );
@@ -129,7 +129,7 @@ class CaptureLookupsCommand extends ContainerAwareCommand
                         continue;
                     } else {
                         $file = $safeFileName;
-                        $output->writeln('Ok, continuing with the safe file name.');
+                        $output->write('Ok, continuing with the safe file name. ');
                     }
                 }
 
@@ -138,7 +138,7 @@ class CaptureLookupsCommand extends ContainerAwareCommand
 
                 // Last check before overwriting the file
                 if (file_exists($path)) {
-                    $question = new ConfirmationQuestion(sprintf("<question>File already exists.</question>\nDo you wish to overwrite the file? %s", $default), $forcedMode, '/^(y|yes)/i');
+                    $question = new ConfirmationQuestion(sprintf("<question>File already exists.</question>\nDo you wish to overwrite the file? %s ", $default), $forcedMode, '/^(y|yes)/i');
 
                     if (!$helper->ask($input, $output, $question)) {
                         $output->writeln('<comment>Skipping (file exists).</comment>');
