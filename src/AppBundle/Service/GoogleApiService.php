@@ -134,7 +134,8 @@ class GoogleApiService
                     continue;
                 }
 
-                $sheets[$sp->getTitle()] = [
+                $sheets[preg_replace("~'~", '', $sp->getTitle())] = [
+                    'title' => $sp->getTitle(),
                     // TODO we could decide batchGet basedon the size of the batch. Do we care?
 //                    'columnCount' => $sp->getGridProperties()->getColumnCount(),
 //                    'rowCount' => $sp->getGridProperties()->getRowCount(),
@@ -154,15 +155,22 @@ class GoogleApiService
                 /** @var \Google_Service_Sheets_BatchGetValuesResponse $batchResult */
                 $batchResult = $service->spreadsheets_values->batchGet(
                     $spreadsheetId,
-                    ['ranges' => array_map(function ($sheetName) use ($range) { return $sheetName.'!'.$range; }, array_keys($sheets))]
+                    ['ranges' => array_map(function ($sheet) use ($range) { return $sheet['title'].'!'.$range; }, array_values($sheets))]
                 );
 
                 /** @var \Google_Service_Sheets_ValueRange $valueRange */
                 foreach ($batchResult->getValueRanges() as $valueRange) {
-                    preg_match('~^\'?([^\'!]+)\'?!~', $valueRange->getRange(), $matches);
+
+                    preg_match('~^(.*)![A-Z0-9]+:[A-Z0-9]+$~', $valueRange->getRange(), $matches);
 
                     if (!empty($matches) && isset($matches[1])) {
-                        $sheets[$matches[1]]['values'] = $valueRange->getValues();
+                        $sheetName = preg_replace("~'~", '', $matches[1]);
+
+                        if (isset($sheets[$sheetName])) {
+                            $sheets[$sheetName]['values'] = $valueRange->getValues();
+                        } else {
+                            throw new \Exception(sprintf('GSuite returned a sheet with name %s, which wasn\'t found in our sheet table. Please remove any special characters from the sheet name.', $valueRange->getRange()));
+                        }
                     }
                     unset($valueRange, $matches);
                 }
