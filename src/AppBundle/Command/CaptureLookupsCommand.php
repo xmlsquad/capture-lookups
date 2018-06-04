@@ -76,10 +76,15 @@ class CaptureLookupsCommand extends ContainerAwareCommand
             $output->writeln(sprintf('<comment>Generated CSV files will be saved into %s.</comment>', $destination));
             $output->writeln('');
 
-            // This is where we force the GoogleApiService to load a cerdentials file
+            // This is where we force the GoogleApiService to load a ceedentials file
             $output->writeln(sprintf(
                 '<comment>Using credentials stored in %s.</comment>',
                 $this->googleApiService->setCredentials($input->getOption('credentials'))
+            ));
+
+            $output->writeln(sprintf(
+                '<comment>Using sheet mapping file stored in %s.</comment>',
+                $this->googleApiService->getMappingFilePath()
             ));
             $output->writeln('');
 
