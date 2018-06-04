@@ -93,6 +93,9 @@ class CaptureLookupsCommand extends ContainerAwareCommand
             $output->writeln(sprintf('Document <info>%s</info> contains <info>%s</info> sheet(s). Writing CSV files now.', $documentName, count($sheets)));
             $output->writeln('');
 
+            // Default ConfirmationQuestion action depends on the $forcedMode settings. Forced == off -> $default = false. Forced == on -> $default = true
+            $default = $forcedMode ? '[Y/n]' : '[y/N]';
+
             // We'll be using this helper in the loop in a while, so let's fetch it just once
             $helper = $this->getHelper('question');
 
@@ -112,7 +115,7 @@ class CaptureLookupsCommand extends ContainerAwareCommand
                     $safeFileName = preg_replace('~\ {2,}~', ' ', $safeFileName);
 
                     $question = new ConfirmationQuestion(
-                        sprintf("<error>A risky file name detected.</error>\nI suggest to continue with a safe file name: <comment>%s</comment>. Do you agree?", $safeFileName),
+                        sprintf("<error>A risky file name detected.</error>\nI suggest to continue with a safe file name: <comment>%s</comment>. Do you agree? %s", $safeFileName, $default),
                         $forcedMode,
                         '/^(y|yes)/i'
                     );
@@ -130,7 +133,7 @@ class CaptureLookupsCommand extends ContainerAwareCommand
 
                 // Last check before overwriting the file
                 if (file_exists($path)) {
-                    $question = new ConfirmationQuestion("<question>File already exists.</question>\nDo you wish to overwrite the file?", $forcedMode, '/^(y|yes)/i');
+                    $question = new ConfirmationQuestion(sprintf("<question>File already exists.</question>\nDo you wish to overwrite the file? %s", $default), $forcedMode, '/^(y|yes)/i');
 
                     if (!$helper->ask($input, $output, $question)) {
                         $output->writeln('<comment>Skipping (file exists).</comment>');
