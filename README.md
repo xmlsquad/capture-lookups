@@ -1,8 +1,8 @@
 # capture-lookups
+
 A Symfony Console command. Searches for configuration file that lists URLs of Google Sheets, grabs the Sheets and stores their data locally as CSV files.
 
 Designed be used in the context of the Symfony Console application at https://github.com/forikal-uk/xml-authoring-tools which, in turn, is used in the context of a known directory structure which is based on [xml-authoring-project](https://github.com/forikal-uk/xml-authoring-project).
-
 
 # Usage instructions
 
@@ -34,11 +34,11 @@ LookupTableB:
 
 1. Checkout the repository
 1. Install dependencies with `composer install`
-1. Put a `credentials.json` file in the Symfony project root or anywhere in any of the parent directories accessible to PHP
-1. Issue `bin/console forikal:capture-lookups` to see all available mappings
-1. Issue `bin/console forikal:capture-lookups --sheet=LookupTableA` to run the command interactively
-1. Issue `bin/console forikal:capture-lookups --sheet=LookupTableA --no-interaction` to run the command without any prompts, skipping risky file names or existing files
-1. Issue `bin/console forikal:capture-lookups --sheet=LookupTableA --no-interaction --force` to run the command without any prompts, **overwriting existing files** and **using sanitised file names**
+1. Put a `credentials.json` file in the project root or anywhere in any of the parent directories accessible to PHP
+1. Issue `bin/capture-lookups` to see all available mappings
+1. Issue `bin/capture-lookups --sheet=LookupTableA` to run the command interactively
+1. Issue `bin/capture-lookups --sheet=LookupTableA --no-interaction` to run the command without any prompts, skipping risky file names or existing files
+1. Issue `bin/capture-lookups --sheet=LookupTableA --no-interaction --force` to run the command without any prompts, **overwriting existing files** and **using sanitised file names**
  
 ## Unit testing
 
@@ -86,5 +86,6 @@ When the command is run, it will:
     * Else, create a CSV file with the chosen name. 
     * Write the contents of the Google Sheet Tab as a CSV file. (comma delimeter, double quotes used to encapsulate strings)  
 
+# TODO
 
-
+* Code reuse with `AbstractCommand`

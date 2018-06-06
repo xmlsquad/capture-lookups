@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Service;
+namespace Forikal\CaptureLookups\Service;
 
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Yaml\Yaml;
@@ -35,7 +35,7 @@ class GoogleApiService
      * @param string $mappingFileName
      * @param string $credentialsFileName
      */
-    public function __construct(string $projectDir, string $mappingFileName, string $credentialsFileName)
+    public function __construct(string $projectDir = '', string $mappingFileName = 'mapping_test.yml', string $credentialsFileName = 'credentials_test.json')
     {
         $this->projectDir = $projectDir;
         $this->mappingFileName = $mappingFileName;
@@ -160,7 +160,6 @@ class GoogleApiService
 
                 /** @var \Google_Service_Sheets_ValueRange $valueRange */
                 foreach ($batchResult->getValueRanges() as $valueRange) {
-
                     preg_match('~^(.*)![A-Z0-9]+:[A-Z0-9]+$~', $valueRange->getRange(), $matches);
 
                     if (!empty($matches) && isset($matches[1])) {

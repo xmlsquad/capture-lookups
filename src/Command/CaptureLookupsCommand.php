@@ -1,23 +1,40 @@
 <?php
 
-namespace AppBundle\Command;
+namespace Forikal\CaptureLookups\Command;
 
-use AppBundle\Service\GoogleApiService;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Forikal\CaptureLookups\Service\GoogleApiService;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
-class CaptureLookupsCommand extends ContainerAwareCommand
+/**
+ * Class CaptureLookupsCommand.
+ */
+class CaptureLookupsCommand extends Command
 {
-    /** @var GoogleApiService */
+    const NAME = 'capture-lookups';
+
+    /**
+     * @var GoogleApiService
+     */
     private $googleApiService;
 
-    public function __construct(GoogleApiService $googleApiService)
+    /**
+     * CaptureLookupsCommand constructor.
+     *
+     * @param GoogleApiService|null $googleApiService
+     */
+    public function __construct(GoogleApiService $googleApiService = null)
     {
-        $this->googleApiService = $googleApiService;
+        if ($googleApiService instanceof GoogleApiService) {
+            $this->googleApiService = $googleApiService;
+        } else {
+            $this->googleApiService = new GoogleApiService();
+        }
+
         parent::__construct();
     }
 
@@ -25,7 +42,7 @@ class CaptureLookupsCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('forikal:capture-lookups')
+            ->setName(self::NAME)
             ->setDescription('Downloads specified Google Sheet and saves it as a CSV.')
             ->addOption('destination', 'd', InputOption::VALUE_OPTIONAL, 'Path to a directory you want to store the resulting CSV files.')
             ->addOption('sheet', 's', InputOption::VALUE_OPTIONAL, 'Name of the sheet to download.')

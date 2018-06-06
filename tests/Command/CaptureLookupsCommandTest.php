@@ -1,36 +1,29 @@
 <?php
 
-namespace AppBundle\Tests\Command;
+namespace Forikal\CaptureLookups\Tests\Command;
 
-use AppBundle\Command\CaptureLookupsCommand;
-use AppBundle\Service\GoogleApiService;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Forikal\CaptureLookups\Command\CaptureLookupsCommand;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
+use PHPUnit\Framework\TestCase;
 
-class CaptureLookupsCommandTest extends KernelTestCase
+class CaptureLookupsCommandTest extends TestCase
 {
-    /** @var Application */
+    /**
+     * @var Application
+     */
     private $application;
 
-    private $destination = './var/tmp';
-
+    /**
+     * Initialize application before each test
+     */
     public function setUp()
     {
-        $kernel = self::bootKernel();
-        $application = new Application($kernel);
+        $this->application = new Application();
+        $this->application->add(new CaptureLookupsCommand());
 
-        $gas = new GoogleApiService(
-            realpath($kernel->getRootDir().'/../'),
-            $kernel->getContainer()->getParameter('mapping_file_name'),
-            $kernel->getContainer()->getParameter('credentials_file_name')
-        );
-
-        $application->add(new CaptureLookupsCommand($gas));
-
-        $this->application = $application;
-
-        // Cleans up all Test*.csv files in the var/tmp directory from previous runs
+        // Cleans up all Test*.csv files
+        // in the /tmp directory from previous runs
         foreach($this->getLocalCsvFiles() as $csvFile) {
             unlink($csvFile);
         }
@@ -38,14 +31,9 @@ class CaptureLookupsCommandTest extends KernelTestCase
         parent::setUp();
     }
 
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
-
     public function testListMappings()
     {
-        $command = $this->application->find('forikal:capture-lookups');
+        $command = $this->application->find('capture-lookups');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array(
             'command'  => $command->getName(),
@@ -60,12 +48,12 @@ class CaptureLookupsCommandTest extends KernelTestCase
 
     public function testNotForced()
     {
-        $command = $this->application->find('forikal:capture-lookups');
+        $command = $this->application->find('capture-lookups');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array(
             'command' => $command->getName(),
             '--sheet' => 'TestingSheet',
-            '--destination' => './var/tmp',
+            '--destination' => '/tmp',
         ), [
             'interactive' => false
         ]);
@@ -85,7 +73,7 @@ class CaptureLookupsCommandTest extends KernelTestCase
         $commandTester->execute(array(
             'command' => $command->getName(),
             '--sheet' => 'TestingSheet',
-            '--destination' => './var/tmp',
+            '--destination' => '/tmp',
         ), [
             'interactive' => false
         ]);
@@ -106,12 +94,12 @@ class CaptureLookupsCommandTest extends KernelTestCase
 
     public function testBatchGetForced()
     {
-        $command = $this->application->find('forikal:capture-lookups');
+        $command = $this->application->find('capture-lookups');
 
         $commandSpec = [
             'command' => $command->getName(),
             '--sheet' => 'TestingSheetBatchGet',
-            '--destination' => './var/tmp',
+            '--destination' => '/tmp',
             '--force' => true
         ];
 
@@ -140,6 +128,6 @@ class CaptureLookupsCommandTest extends KernelTestCase
      * @return array
      */
     private function getLocalCsvFiles() {
-        return glob(realpath($this->application->getKernel()->getRootDir().'/../'.$this->destination).'/Test*.csv');
+        return glob('/tmp/Test*.csv');
     }
 }

@@ -1,24 +1,18 @@
+# System
 .DS_Store
 Thumbs.db
-credentials.json
+
+# Testing tools
 .php_cs.cache
-*.csv
-*.exe
-/.web-server-pid
-/app/config/parameters.yml
-/build/
 /phpunit.xml
-/var/*
-!/var/cache
-/var/cache/*
-!var/cache/.gitkeep
-!/var/logs
-/var/logs/*
-!var/logs/.gitkeep
-!/var/sessions
-/var/sessions/*
-!var/sessions/.gitkeep
-!var/SymfonyRequirements.php
-!/var/tmp
+
+# Composer
 /vendor/
-/web/bundles/
+/composer.lock
+/composer.phar
+
+# Data
+*.csv
+
+# Configs
+credentials.json
