@@ -10,7 +10,7 @@ class GoogleApiService
     /** @var \Google_Client */
     private $client;
 
-    /** @var array Parsed mapping.yml */
+    /** @var array Parsed mapping.yaml */
     private $mapping;
 
     /** @var string Symfony project directory */
@@ -35,7 +35,7 @@ class GoogleApiService
      * @param string $mappingFileName
      * @param string $credentialsFileName
      */
-    public function __construct(string $projectDir = '', string $mappingFileName = 'mapping_test.yml', string $credentialsFileName = 'credentials_test.json')
+    public function __construct(string $projectDir = '', string $mappingFileName = 'mapping_test.yaml', string $credentialsFileName = 'credentials_test.json')
     {
         $this->projectDir = $projectDir;
         $this->mappingFileName = $mappingFileName;
@@ -80,7 +80,7 @@ class GoogleApiService
     }
 
     /**
-     * Returns the array resulting from mapping.yml.
+     * Returns the array resulting from mapping.yaml.
      *
      * @return array|mixed
      *
