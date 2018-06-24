@@ -14,6 +14,8 @@ class CaptureLookupsCommandTest extends TestCase
      */
     private $application;
 
+    const TMP_TEST_DATA_DIR = "tests/tmp-test-data";
+
     /**
      * Initialize application before each test
      */
@@ -23,10 +25,14 @@ class CaptureLookupsCommandTest extends TestCase
         $this->application->add(new CaptureLookupsCommand());
 
         // Cleans up all Test*.csv files
-        // in the /tmp directory from previous runs
-        foreach($this->getLocalCsvFiles() as $csvFile) {
-            unlink($csvFile);
+        // in the SELF::TMP_TEST_DATA_DIR directory from previous runs
+
+        if ($this->getLocalCsvFiles()) {
+            foreach($this->getLocalCsvFiles() as $csvFile) {
+                unlink($csvFile);
+            }
         }
+
         
         parent::setUp();
     }
@@ -53,7 +59,7 @@ class CaptureLookupsCommandTest extends TestCase
         $commandTester->execute(array(
             'command' => $command->getName(),
             '--sheet' => 'TestingSheet',
-            '--destination' => '/tmp',
+            '--destination' => SELF::TMP_TEST_DATA_DIR,
         ), [
             'interactive' => false
         ]);
@@ -73,7 +79,7 @@ class CaptureLookupsCommandTest extends TestCase
         $commandTester->execute(array(
             'command' => $command->getName(),
             '--sheet' => 'TestingSheet',
-            '--destination' => '/tmp',
+            '--destination' => SELF::TMP_TEST_DATA_DIR,
         ), [
             'interactive' => false
         ]);
@@ -99,7 +105,7 @@ class CaptureLookupsCommandTest extends TestCase
         $commandSpec = [
             'command' => $command->getName(),
             '--sheet' => 'TestingSheetBatchGet',
-            '--destination' => '/tmp',
+            '--destination' => SELF::TMP_TEST_DATA_DIR,
             '--force' => true
         ];
 
@@ -128,6 +134,6 @@ class CaptureLookupsCommandTest extends TestCase
      * @return array
      */
     private function getLocalCsvFiles() {
-        return glob('/tmp/Test*.csv');
+        return glob(SELF::TMP_TEST_DATA_DIR.'/Test*.csv');
     }
 }
