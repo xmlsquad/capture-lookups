@@ -1,8 +1,8 @@
 <?php
 
-namespace Forikal\CaptureLookups\Command;
+namespace XmlSquad\CaptureLookups\Command;
 
-use Forikal\CaptureLookups\Service\GoogleApiService;
+use XmlSquad\CaptureLookups\Service\GoogleApiService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;

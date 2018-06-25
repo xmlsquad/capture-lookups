@@ -1,8 +1,8 @@
 <?php
 
-namespace Forikal\CaptureLookups\Tests\Command;
+namespace XmlSquad\CaptureLookups\Tests\Command;
 
-use Forikal\CaptureLookups\Command\CaptureLookupsCommand;
+use XmlSquad\CaptureLookups\Command\CaptureLookupsCommand;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use PHPUnit\Framework\TestCase;

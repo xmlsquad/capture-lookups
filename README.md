@@ -2,13 +2,13 @@
 
 A Symfony Console command. Searches for configuration file that lists URLs of Google Sheets, grabs the Sheets and stores their data locally as CSV files.
 
-Designed be used in the context of the Symfony Console application at https://github.com/forikal-uk/xml-authoring-tools which, in turn, is used in the context of a known directory structure which is based on [xml-authoring-project](https://github.com/forikal-uk/xml-authoring-project).
+Designed be used in the context of the Symfony Console application at https://github.com/xmlsquad/xml-authoring-tools which, in turn, is used in the context of a known directory structure which is based on [xml-authoring-project](https://github.com/xmlsquad/xml-authoring-project).
 
 # Usage instructions
 
 ## Specifying the Lookup tables to collect
 
-We assume this command is run in the context of an [xml-authoring-project](https://github.com/forikal-uk/xml-authoring-project). ie. the key aspects of the structure of the directory is known.
+We assume this command is run in the context of an [xml-authoring-project](https://github.com/xmlsquad/xml-authoring-project). ie. the key aspects of the structure of the directory is known.
 
 Use the `mapping.yaml` configuration file which defines the locations of the Google Sheets we must collect.
 
@@ -57,9 +57,9 @@ Any Google Sheet tab which has a trailing underscore will be considered to be sk
 
 ## Connecting to GSuite
 
-The file that Google Api uses to authenticate access to GSuite should be in the root of the [xml-authoring-project](https://github.com/forikal-uk/xml-authoring-project).
+The file that Google Api uses to authenticate access to GSuite should be in the root of the [xml-authoring-project](https://github.com/xmlsquad/xml-authoring-project).
 
-The [ping-drive project explains how to get set up to connect to GSuite](https://github.com/forikal-uk/ping-drive#usage).
+The [ping-drive project explains how to get set up to connect to GSuite](https://github.com/xmlsquad/ping-drive#usage).
 
 
 ## Run the command

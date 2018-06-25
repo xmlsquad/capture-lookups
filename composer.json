@@ -1,5 +1,5 @@
 {
-    "name": "forikal-uk/capture-lookups",
+    "name": "xmlsquad/capture-lookups",
     "description": "Grabs Google Sheets and stores their data as CSV files",
     "type": "library",
     "license": "Apache-2.0",
@@ -8,12 +8,12 @@
     ],
     "autoload": {
         "psr-4": {
-            "Forikal\\CaptureLookups\\": "src/"
+            "XmlSquad\\CaptureLookups\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Forikal\\CaptureLookups\\Tests\\": "tests/"
+            "XmlSquad\\CaptureLookups\\Tests\\": "tests/"
         }
     },
     "require": {
@@ -22,7 +22,7 @@
         "symfony/filesystem": "^3.4",
         "symfony/yaml": "^3.4",
         "google/apiclient": "^2.0",
-        "forikal-uk/xml-authoring-library": "dev-master"
+        "xmlsquad/xml-authoring-library": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.1",

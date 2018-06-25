@@ -1,6 +1,6 @@
 <?php
 
-namespace Forikal\CaptureLookups\Service;
+namespace XmlSquad\CaptureLookups\Service;
 
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Yaml\Yaml;
