@@ -16,3 +16,8 @@ Thumbs.db
 
 # Configs
 credentials.json
+
+
+# Temporary test folder.
+tests/tmp-test-data/*
+!tests/tmp-test-data/.gitkeep
