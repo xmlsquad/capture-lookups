@@ -3,7 +3,7 @@
 namespace XmlSquad\CaptureLookups\Command;
 
 use XmlSquad\CaptureLookups\Service\GoogleApiService;
-use Symfony\Component\Console\Command\Command;
+use XmlSquad\Library\Command\AbstractCommand;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -13,7 +13,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 /**
  * Class CaptureLookupsCommand.
  */
-class CaptureLookupsCommand extends Command
+class CaptureLookupsCommand extends AbstractCommand
 {
     const NAME = 'capture-lookups';
 
@@ -47,9 +47,44 @@ class CaptureLookupsCommand extends Command
             ->addOption('destination', 'd', InputOption::VALUE_OPTIONAL, 'Path to a directory you want to store the resulting CSV files.')
             ->addOption('sheet', 's', InputOption::VALUE_OPTIONAL, 'Name of the sheet to download.')
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'Overwrites existing CSV files.')
-            ->addOption('gApiServiceAccountCredentialsFile', null, InputOption::VALUE_OPTIONAL, 'Path to the .json file with Google user credentials.')
+            ->doConfigureGApiServiceAccountCredentialsFileOption();
+
         ;
     }
+
+
+    /**
+     * Configure GApiConnectionOption - [gApiOAuthSecretFile]
+     *
+     * @param int $mode
+     * @param string $description
+     * @return $this
+     */
+    protected function doConfigureGApiServiceAccountCredentialsFileOption(
+        $description = 'Path to the .json file with Google user credentials.',
+        $default = null)
+    {
+        $this
+            ->addOption(
+                'gApiServiceAccountCredentialsFile',
+                'c',
+                $mode,
+                $description,
+                $default);
+        return $this;
+    }
+
+
+    /**
+     * Get GApiConnectionOption - [gApiServiceAccountCredentialsFile]
+     *
+     * @param InputInterface $input
+     * @return mixed
+     */
+    protected function doGetGApiServiceAccountCredentialsFileOption(InputInterface $input) {
+        return $input->getOption('gApiServiceAccountCredentialsFile');
+    }
+
 
     /**
      * @param InputInterface  $input
@@ -96,7 +131,7 @@ class CaptureLookupsCommand extends Command
             // This is where we force the GoogleApiService to load a ceedentials file
             $output->writeln(sprintf(
                 '<comment>Using gApiServiceAccountCredentials stored in %s.</comment>',
-                $this->googleApiService->setCredentials($input->getOption('gApiServiceAccountCredentialsFile'))
+                $this->googleApiService->setCredentials($this->doGetGApiServiceAccountCredentialsFileOption($input))
             ));
 
             $output->writeln(sprintf(
