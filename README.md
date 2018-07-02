@@ -66,7 +66,7 @@ The [ping-drive project explains how to get set up to connect to GSuite](https:/
 
 When the command is run, it will:
 
-* Search for the scapesettings.yaml in the current working directory, if not found it will look in the parent recursively until a file named scapesettings.yaml is found.
+* Search for the XmlAuthoringProjectSettings.yaml in the current working directory, if not found it will look in the parent recursively until a file named XmlAuthoringProjectSettings.yaml is found.
 * Determine the `DestinationDirectory` to write-to:
   * If `DestinationDirectory` option is passed to command, use that.
   * If no `DestinationDirectory` option is passed to command, set it to the default `DestinationDirectory` (see below). 
