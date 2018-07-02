@@ -47,7 +47,7 @@ class CaptureLookupsCommand extends AbstractCommand
             ->addOption('destination', 'd', InputOption::VALUE_OPTIONAL, 'Path to a directory you want to store the resulting CSV files.')
             ->addOption('sheet', 's', InputOption::VALUE_OPTIONAL, 'Name of the sheet to download.')
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'Overwrites existing CSV files.')
-            ->doConfigureGApiServiceAccountCredentialsFileOption();
+            ->configureGApiServiceAccountCredentialsFileOption();
 
         ;
     }
@@ -60,9 +60,10 @@ class CaptureLookupsCommand extends AbstractCommand
      * @param string $description
      * @return $this
      */
-    protected function doConfigureGApiServiceAccountCredentialsFileOption(
+    protected function configureGApiServiceAccountCredentialsFileOption(
         $description = 'Path to the .json file with Google user credentials.',
-        $default = null)
+        $default = null,
+        $mode = InputOption::VALUE_OPTIONAL)
     {
         $this
             ->addOption(
