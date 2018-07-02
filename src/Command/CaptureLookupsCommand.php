@@ -52,41 +52,7 @@ class CaptureLookupsCommand extends AbstractCommand
         ;
     }
 
-
-    /**
-     * Configure GApiConnectionOption - [gApiOAuthSecretFile]
-     *
-     * @param int $mode
-     * @param string $description
-     * @return $this
-     */
-    protected function configureGApiServiceAccountCredentialsFileOption(
-        $description = 'Path to the .json file with Google user credentials.',
-        $default = null,
-        $mode = InputOption::VALUE_OPTIONAL)
-    {
-        $this
-            ->addOption(
-                'gApiServiceAccountCredentialsFile',
-                'c',
-                $mode,
-                $description,
-                $default);
-        return $this;
-    }
-
-
-    /**
-     * Get GApiConnectionOption - [gApiServiceAccountCredentialsFile]
-     *
-     * @param InputInterface $input
-     * @return mixed
-     */
-    protected function getGApiServiceAccountCredentialsFileOption(InputInterface $input) {
-        return $input->getOption('gApiServiceAccountCredentialsFile');
-    }
-
-
+    
     /**
      * @param InputInterface  $input
      * @param OutputInterface $output
