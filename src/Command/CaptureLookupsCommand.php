@@ -82,7 +82,7 @@ class CaptureLookupsCommand extends AbstractCommand
      * @param InputInterface $input
      * @return mixed
      */
-    protected function doGetGApiServiceAccountCredentialsFileOption(InputInterface $input) {
+    protected function getGApiServiceAccountCredentialsFileOption(InputInterface $input) {
         return $input->getOption('gApiServiceAccountCredentialsFile');
     }
 
@@ -132,7 +132,7 @@ class CaptureLookupsCommand extends AbstractCommand
             // This is where we force the GoogleApiService to load a ceedentials file
             $output->writeln(sprintf(
                 '<comment>Using gApiServiceAccountCredentials stored in %s.</comment>',
-                $this->googleApiService->setCredentials($this->doGetGApiServiceAccountCredentialsFileOption($input))
+                $this->googleApiService->setCredentials($this->getGApiServiceAccountCredentialsFileOption($input))
             ));
 
             $output->writeln(sprintf(
