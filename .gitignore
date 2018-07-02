@@ -15,7 +15,7 @@ Thumbs.db
 *.csv
 
 # Configs
-credentials.json
+gApiServiceAccountCredentials.json
 
 
 # Temporary test folder.

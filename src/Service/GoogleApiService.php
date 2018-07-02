@@ -17,10 +17,10 @@ class GoogleApiService
     private $projectDir;
 
     /** @var string */
-    private $credentialsFileName;
+    private $gApiServiceAccountCredentialsFileName;
 
-    /** @var string Path to the used credentials file */
-    private $credentialsFilePath;
+    /** @var string Path to the used gApiServiceAccountCredentialsFile file */
+    private $gApiServiceAccountCredentialsFilePath;
 
     /** @var string */
     private $mappingFileName;
@@ -33,44 +33,44 @@ class GoogleApiService
      *
      * @param string $projectDir
      * @param string $mappingFileName
-     * @param string $credentialsFileName
+     * @param string $gApiServiceAccountCredentialsFileName
      */
-    public function __construct(string $projectDir = '', string $mappingFileName = 'mapping_test.yaml', string $credentialsFileName = 'credentials_test.json')
+    public function __construct(string $projectDir = '', string $mappingFileName = 'mapping_test.yaml', string $gApiServiceAccountCredentialsFileName = 'gApiServiceAccountCredentials_test.json')
     {
         $this->projectDir = $projectDir;
         $this->mappingFileName = $mappingFileName;
-        $this->credentialsFileName = $credentialsFileName;
+        $this->gApiServiceAccountCredentialsFileName = $gApiServiceAccountCredentialsFileName;
     }
 
     /**
      * A helper method allowing to use different credentials during the lifecycle of the application.
      *
-     * @param null|string $credentialsFilePath
+     * @param null|string $gApiServiceAccountCredentialsFilePath
      *
      * @return string
      *
      * @throws \Exception
      */
-    public function setCredentials(?string $credentialsFilePath = null): string
+    public function setCredentials(?string $gApiServiceAccountCredentialsFilePath = null): string
     {
         $this->client = null;
-        $this->getClient($credentialsFilePath);
+        $this->getClient($gApiServiceAccountCredentialsFilePath);
 
         return $this->getCredentialsFilePath();
     }
 
     /**
-     * Returns path of the currently used credentials file.
+     * Returns path of the currently used gApiServiceAccountCredentialsFile file.
      *
      * @return null|string
      */
     public function getCredentialsFilePath(): ?string
     {
-        return $this->credentialsFilePath;
+        return $this->gApiServiceAccountCredentialsFilePath;
     }
 
     /**
-     * Returns path of the currently used credentials file.
+     * Returns path of the currently used gApiServiceAccountCredentialsFile file.
      *
      * @return null|string
      */
@@ -198,10 +198,10 @@ class GoogleApiService
     protected function getClient(?string $customCredentialsFilePath = null): \Google_Client
     {
         if (null === $this->client) {
-            $path = $this->locateFile($this->credentialsFileName, $customCredentialsFilePath);
+            $path = $this->locateFile($this->gApiServiceAccountCredentialsFileName, $customCredentialsFilePath);
 
             if (is_array($path)) {
-                throw new \Exception("The credentials file wasn't found. Locations we tried: ".join(', ', $path));
+                throw new \Exception("The gApiServiceAccountCredentialsFile file wasn't found. Locations we tried: ".join(', ', $path));
             }
 
             $client = new \Google_Client();
@@ -213,7 +213,7 @@ class GoogleApiService
             $client->setAccessType('offline');
 
             $this->client = $client;
-            $this->credentialsFilePath = $path;
+            $this->gApiServiceAccountCredentialsFilePath = $path;
         }
 
         return $this->client;
@@ -236,7 +236,7 @@ class GoogleApiService
      */
     private function locateFile($fileName, ?string $userSuppliedPath = null)
     {
-        // These are the primary credentials file locations
+        // These are the primary gApiServiceAccountCredentialsFile file locations
         $locations = [
             // First check the project file
             $this->projectDir.DIRECTORY_SEPARATOR.$fileName,

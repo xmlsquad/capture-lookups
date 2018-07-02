@@ -47,7 +47,7 @@ class CaptureLookupsCommand extends Command
             ->addOption('destination', 'd', InputOption::VALUE_OPTIONAL, 'Path to a directory you want to store the resulting CSV files.')
             ->addOption('sheet', 's', InputOption::VALUE_OPTIONAL, 'Name of the sheet to download.')
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'Overwrites existing CSV files.')
-            ->addOption('credentials', null, InputOption::VALUE_OPTIONAL, 'Path to the .json file with Google user credentials.')
+            ->addOption('gApiServiceAccountCredentialsFile', null, InputOption::VALUE_OPTIONAL, 'Path to the .json file with Google user credentials.')
         ;
     }
 
@@ -95,8 +95,8 @@ class CaptureLookupsCommand extends Command
 
             // This is where we force the GoogleApiService to load a ceedentials file
             $output->writeln(sprintf(
-                '<comment>Using credentials stored in %s.</comment>',
-                $this->googleApiService->setCredentials($input->getOption('credentials'))
+                '<comment>Using gApiServiceAccountCredentials stored in %s.</comment>',
+                $this->googleApiService->setCredentials($input->getOption('gApiServiceAccountCredentialsFile'))
             ));
 
             $output->writeln(sprintf(

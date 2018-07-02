@@ -34,7 +34,7 @@ LookupTableB:
 
 1. Checkout the repository
 1. Install dependencies with `composer install`
-1. Put a `credentials.json` file in the project root or anywhere in any of the parent directories accessible to PHP
+1. Put a `gApiServiceAccountCredentials.json` file in the project root or anywhere in any of the parent directories accessible to PHP
 1. Issue `bin/capture-lookups` to see all available mappings
 1. Issue `bin/capture-lookups --sheet=LookupTableA` to run the command interactively
 1. Issue `bin/capture-lookups --sheet=LookupTableA --no-interaction` to run the command without any prompts, skipping risky file names or existing files
