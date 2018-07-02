@@ -52,7 +52,7 @@ class CaptureLookupsCommand extends AbstractCommand
         ;
     }
 
-    
+
     /**
      * @param InputInterface  $input
      * @param OutputInterface $output
