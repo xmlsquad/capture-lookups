@@ -22,7 +22,7 @@
         "symfony/filesystem": "^3.4",
         "symfony/yaml": "^3.4",
         "google/apiclient": "^2.0",
-        "xmlsquad/xml-authoring-library": "dev-master"
+        "xmlsquad/xml-authoring-library": "0.3.3"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.1",
