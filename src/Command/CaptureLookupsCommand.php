@@ -63,7 +63,7 @@ class CaptureLookupsCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln('');
+        $output->writeln('',OutputInterface::VERBOSITY_NORMAL);
 
         $forcedMode = $mappingName = $input->getOption('force');
         $mappingName = $input->getOption('sheet');
@@ -71,19 +71,19 @@ class CaptureLookupsCommand extends AbstractCommand
         $destination = realpath($input->getOption('destination') ?: getcwd());
 
         if (empty($destination)) {
-            $output->writeln(sprintf('<error>The destination directory doesn\'t exist: %s</error>', $input->getOption('destination') ?: getcwd()));
+            $output->writeln(sprintf('<error>The destination directory doesn\'t exist: %s</error>', $input->getOption('destination') ?: getcwd()), OutputInterface::VERBOSITY_NORMAL);
 
             return;
         }
 
         if (!is_dir($destination)) {
-            $output->writeln(sprintf('<error>The destination is not a valid directory: %s</error>', $destination));
+            $output->writeln(sprintf('<error>The destination is not a valid directory: %s</error>', $destination),OutputInterface::VERBOSITY_NORMAL);
 
             return;
         }
 
         if (!is_writable($destination)) {
-            $output->writeln(sprintf('<error>The destination is not writable: %s</error>', $destination));
+            $output->writeln(sprintf('<error>The destination is not writable: %s</error>', $destination),OutputInterface::VERBOSITY_NORMAL);
 
             return;
         }
@@ -92,8 +92,8 @@ class CaptureLookupsCommand extends AbstractCommand
         if (!isset($mapping[$mappingName])) {
             $this->listKnownSheets($output);
         } else {
-            $output->writeln(sprintf('<comment>Generated CSV files will be saved into %s.</comment>', $destination));
-            $output->writeln('');
+            $output->writeln(sprintf('<comment>Generated CSV files will be saved into %s.</comment>', $destination),OutputInterface::VERBOSITY_NORMAL);
+            $output->writeln('',OutputInterface::VERBOSITY_NORMAL);
 
             // This is where we force the GoogleApiService to load a ceedentials file
             $output->writeln(sprintf(
@@ -104,18 +104,18 @@ class CaptureLookupsCommand extends AbstractCommand
             $output->writeln(sprintf(
                 '<comment>Using sheet mapping file stored in %s.</comment>',
                 $this->googleApiService->getMappingFilePath()
-            ));
-            $output->writeln('');
+            ),OutputInterface::VERBOSITY_NORMAL);
+            $output->writeln('',OutputInterface::VERBOSITY_NORMAL);
 
-            $output->write('Fetching data from the Google API...');
+            $output->write('Fetching data from the Google API...',OutputInterface::VERBOSITY_NORMAL);
 
             // The service does the API-related job and returns an array of sheets and their values together with the document name
             list($documentName, $sheets) = $this->googleApiService->loadSheets($mappingName);
 
-            $output->writeln('done.');
-            $output->writeln('');
-            $output->writeln(sprintf('Document <info>%s</info> contains <info>%s</info> sheet(s). Writing CSV files now.', $documentName, count($sheets)));
-            $output->writeln('');
+            $output->writeln('done.',OutputInterface::VERBOSITY_NORMAL);
+            $output->writeln('',OutputInterface::VERBOSITY_NORMAL);
+            $output->writeln(sprintf('Document <info>%s</info> contains <info>%s</info> sheet(s). Writing CSV files now.', $documentName, count($sheets)),OutputInterface::VERBOSITY_NORMAL);
+            $output->writeln('',OutputInterface::VERBOSITY_NORMAL);
 
             // Default ConfirmationQuestion action depends on the $forcedMode settings. Forced == off -> $default = false. Forced == on -> $default = true
             $default = $forcedMode ? '[Y/n]' : '[y/N]';
@@ -144,7 +144,7 @@ class CaptureLookupsCommand extends AbstractCommand
                         '/^(y|yes)/i'
                     );
                     if (!$helper->ask($input, $output, $question)) {
-                        $output->writeln('<comment>Skipping (unsafe file name).</comment>');
+                        $output->writeln('<comment>Skipping (unsafe file name).</comment>',OutputInterface::VERBOSITY_NORMAL);
                         continue;
                     } else {
                         $file = $safeFileName;
@@ -160,7 +160,7 @@ class CaptureLookupsCommand extends AbstractCommand
                     $question = new ConfirmationQuestion(sprintf("<question>File already exists.</question>\nDo you wish to overwrite the file? %s ", $default), $forcedMode, '/^(y|yes)/i');
 
                     if (!$helper->ask($input, $output, $question)) {
-                        $output->writeln('<comment>Skipping (file exists).</comment>');
+                        $output->writeln('<comment>Skipping (file exists).</comment>',OutputInterface::VERBOSITY_NORMAL);
                         continue;
                     }
                 }
@@ -172,11 +172,11 @@ class CaptureLookupsCommand extends AbstractCommand
                 }
                 fclose($fp);
 
-                $output->writeln('<comment>Done.</comment>');
+                $output->writeln('<comment>Done.</comment>',OutputInterface::VERBOSITY_NORMAL);
             }
 
-            $output->writeln('');
-            $output->writeln('<comment>All CSV files saved successfully.</comment>');
+            $output->writeln('',OutputInterface::VERBOSITY_NORMAL);
+            $output->writeln('<comment>All CSV files saved successfully.</comment>',OutputInterface::VERBOSITY_NORMAL);
         }
     }
 
@@ -187,7 +187,7 @@ class CaptureLookupsCommand extends AbstractCommand
      */
     protected function listKnownSheets(OutputInterface $output)
     {
-        $output->writeln('Please enter one of the configured Sheet names');
+        $output->writeln('Please enter one of the configured Sheet names',OutputInterface::VERBOSITY_NORMAL);
 
         $table = new Table($output);
         $table->setHeaders(['Sheet Name', 'URL']);
